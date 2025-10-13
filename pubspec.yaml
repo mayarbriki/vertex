@@ -11,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  sqflite: ^2.2.8+4    # Add this for SQLite support
+  path: ^1.8.3         # Add this to handle database file paths
+
 
 dev_dependencies:
   flutter_test:

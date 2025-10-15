@@ -123,71 +123,117 @@ class _TransactionScreenState extends State<TransactionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        title: const Text('Transactions'),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Text(
+          'Transactions',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: const Color(0xFF667eea),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
       ),
       body: Column(
         children: [
-          // Summary Cards
+          // Summary Cards with gradient background
           Container(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _SummaryCard(
-                    title: 'Income',
-                    amount: totalIncome,
-                    color: Colors.green,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _SummaryCard(
+                          title: 'Income',
+                          amount: totalIncome,
+                          color: const Color(0xFF4CAF50),
+                          icon: Icons.trending_up,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _SummaryCard(
+                          title: 'Expense',
+                          amount: totalExpense,
+                          color: const Color(0xFFf44336),
+                          icon: Icons.trending_down,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _SummaryCard(
-                    title: 'Expense',
-                    amount: totalExpense,
-                    color: Colors.red,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: _SummaryCard(
+                  const SizedBox(height: 12),
+                  _SummaryCard(
                     title: 'Balance',
                     amount: balance,
-                    color: balance >= 0 ? Colors.green : Colors.red,
+                    color: balance >= 0 ? const Color(0xFF4CAF50) : const Color(0xFFf44336),
+                    icon: Icons.account_balance_wallet,
+                    isLarge: true,
                   ),
-                ),
-              ],
-            ),
-          ),
-          // Search Bar
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Search transactions...',
-                prefixIcon: Icon(Icons.search),
-                border: OutlineInputBorder(),
+                ],
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
             ),
           ),
-          const SizedBox(height: 16),
+          // Search Bar with improved styling
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(20),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(15),
+                border: Border.all(color: const Color(0xFFE0E0E0)),
+              ),
+              child: TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: 'Search transactions...',
+                  prefixIcon: Icon(Icons.search, color: Color(0xFF9E9E9E)),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
+              ),
+            ),
+          ),
           // Transaction List
           Expanded(
             child: filteredTransactions.isEmpty
-                ? const Center(
-                    child: Text(
-                      'No transactions found',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.receipt_long_outlined,
+                          size: 80,
+                          color: Colors.grey[400],
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No transactions found',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
                     ),
                   )
                 : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredTransactions.length,
                     itemBuilder: (context, index) {
                       final transaction = filteredTransactions[index];
@@ -201,9 +247,19 @@ class _TransactionScreenState extends State<TransactionScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addTransaction,
-        child: const Icon(Icons.add),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF667eea), Color(0xFF764ba2)],
+          ),
+        ),
+        child: FloatingActionButton(
+          onPressed: _addTransaction,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.add, size: 28),
+        ),
       ),
     );
   }
@@ -213,29 +269,54 @@ class _SummaryCard extends StatelessWidget {
   final String title;
   final double amount;
   final Color color;
+  final IconData icon;
+  final bool isLarge;
 
   const _SummaryCard({
     required this.title,
     required this.amount,
     required this.color,
+    required this.icon,
+    this.isLarge = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(isLarge ? 20 : 16),
         child: Column(
           children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: isLarge ? 16 : 14,
+                    color: const Color(0xFF718096),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Icon(icon, color: color, size: isLarge ? 24 : 20),
+              ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 8),
             Text(
               '\$${amount.toStringAsFixed(2)}',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: isLarge ? 24 : 20,
                 fontWeight: FontWeight.bold,
                 color: color,
               ),
@@ -260,23 +341,56 @@ class _TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: transaction.type == TransactionType.income
-              ? Colors.green
-              : Colors.red,
+        contentPadding: const EdgeInsets.all(16),
+        leading: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: (transaction.type == TransactionType.income
+                ? const Color(0xFF4CAF50)
+                : const Color(0xFFf44336)).withOpacity(0.1),
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Icon(
             transaction.type == TransactionType.income
-                ? Icons.arrow_upward
-                : Icons.arrow_downward,
-            color: Colors.white,
+                ? Icons.arrow_upward_rounded
+                : Icons.arrow_downward_rounded,
+            color: transaction.type == TransactionType.income
+                ? const Color(0xFF4CAF50)
+                : const Color(0xFFf44336),
+            size: 24,
           ),
         ),
-        title: Text(transaction.title),
-        subtitle: Text(
-          '${transaction.category} • ${_formatDate(transaction.date)}',
+        title: Text(
+          transaction.title,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+            color: Color(0xFF2D3748),
+          ),
+        ),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(
+            '${transaction.category} • ${_formatDate(transaction.date)}',
+            style: const TextStyle(
+              color: Color(0xFF718096),
+              fontSize: 14,
+            ),
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -285,29 +399,51 @@ class _TransactionTile extends StatelessWidget {
               '\$${transaction.amount.toStringAsFixed(2)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
+                fontSize: 16,
                 color: transaction.type == TransactionType.income
-                    ? Colors.green
-                    : Colors.red,
+                    ? const Color(0xFF4CAF50)
+                    : const Color(0xFFf44336),
               ),
             ),
-            PopupMenuButton(
-              itemBuilder: (context) => [
-                const PopupMenuItem(
-                  value: 'edit',
-                  child: Text('Edit'),
-                ),
-                const PopupMenuItem(
-                  value: 'delete',
-                  child: Text('Delete'),
-                ),
-              ],
-              onSelected: (value) {
-                if (value == 'edit') {
-                  onEdit();
-                } else if (value == 'delete') {
-                  onDelete();
-                }
-              },
+            const SizedBox(width: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: PopupMenuButton(
+                icon: const Icon(Icons.more_vert, color: Color(0xFF9E9E9E)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_outlined, size: 20),
+                        SizedBox(width: 12),
+                        Text('Edit'),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                        SizedBox(width: 12),
+                        Text('Delete', style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ),
+                ],
+                onSelected: (value) {
+                  if (value == 'edit') {
+                    onEdit();
+                  } else if (value == 'delete') {
+                    onDelete();
+                  }
+                },
+              ),
             ),
           ],
         ),

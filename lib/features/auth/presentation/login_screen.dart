@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../transaction/presentation/transaction_screen.dart';
+import '../../../transaction/presentation/landing_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,10 +26,10 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
 
     if (email == _validEmail && password == _validPassword) {
-      // Navigate to transaction screen
+      // Navigate to transaction landing screen
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const TransactionScreen()),
+        MaterialPageRoute(builder: (context) => const TransactionLandingScreen()),
       );
     } else {
       setState(() {
